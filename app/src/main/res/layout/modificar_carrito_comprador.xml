@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Mi Carrito de Compras"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="#212121"
+            android:layout_marginBottom="24dp"/>
+
+        <LinearLayout
+            android:id="@+id/itemCarritoContenedor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="12dp"
+            android:background="@android:color/white"
+            android:elevation="2dp"
+            android:layout_marginBottom="12dp">
+
+            <ImageView
+                android:id="@+id/imgItemCarrito"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="#E0E0E0"
+                android:scaleType="centerCrop"
+                android:contentDescription="Imagen del Artículo en el Carrito"
+                android:layout_marginEnd="12dp"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txtNombreItemCarrito"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nombre de Artículo"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#212121"/>
+
+                <TextView
+                    android:id="@+id/txtPrecioItemCarrito"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="₡Precio Unitario"
+                    android:textSize="14sp"
+                    android:textColor="#607D8B"
+                    android:layout_marginBottom="8dp"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Cantidad "
+                        android:textSize="14sp"/>
+
+                    <EditText
+                        android:id="@+id/editCantidad"
+                        android:layout_width="50dp"
+                        android:layout_height="48dp"
+                        android:inputType="number"
+                        android:text="1"
+                        android:maxLength="2"
+                        android:textAlignment="center"
+                        android:background=""
+                        android:padding="4dp"
+                        android:layout_marginStart="4dp"/>
+
+                    <Button
+                        android:id="@+id/btnEliminarItem"
+                        android:layout_width="wrap_content"
+                        android:layout_height="48dp"
+                        android:text="Eliminar"
+                        android:backgroundTint="#D32F2F"
+                        android:textSize="12sp"
+                        android:layout_marginStart="16dp"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E0E0E0"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:id="@+id/txtTotal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TOTAL: ₡ 0.00"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#212121"
+            android:gravity="end"
+            android:layout_marginBottom="32dp"/>
+
+        <Button
+            android:id="@+id/btnProcederPago"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="PROCEDER AL PAGO"
+            android:backgroundTint="#8BC34A"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+
+    </LinearLayout>
+</ScrollView>
