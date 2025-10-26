@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FormularioApp">
         <activity
-            android:name=".MainActivity"
+            android:name=".MainActivityProyecto"
             android:exported="false" />
     </application>
 

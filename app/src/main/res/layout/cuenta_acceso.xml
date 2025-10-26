@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp"
-        android:background=""
+        android:background="#FFFFFF"
         android:layout_marginBottom="24dp">
 
         <TextView
@@ -40,7 +40,7 @@
             android:paddingHorizontal="4dp"
             android:inputType="text"
             android:enabled="false"
-            android:background=""
+            android:background="#FFFFFF"
             android:layout_marginBottom="12dp"/>
 
         <TextView
@@ -59,7 +59,7 @@
             android:paddingHorizontal="4dp"
             android:inputType="textEmailAddress"
             android:enabled="false"
-            android:background=""
+            android:background="#FFFFFF"
             android:layout_marginBottom="12dp"/>
 
         <TextView
@@ -78,7 +78,7 @@
             android:paddingHorizontal="4dp"
             android:inputType="phone"
             android:enabled="false"
-            android:background=""/>
+            android:background="#FFFFFF"/>
 
     </LinearLayout>
 
@@ -133,7 +133,7 @@
     <Button
         android:id="@+id/btnCerrarSesion"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:text="CERRAR SESIÓN"
         android:backgroundTint="#F44336"
         android:textColor="#FFFFFF"
