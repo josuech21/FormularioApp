@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "246928536455",
+    "project_id": "bdproyectoprograv",
+    "storage_bucket": "bdproyectoprograv.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:246928536455:android:ea6c948274bd771fe29922",
+        "android_client_info": {
+          "package_name": "com.example.formularioapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQ9eYPOhDjO2x-KQzn2jgCirgXeZc_qrs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

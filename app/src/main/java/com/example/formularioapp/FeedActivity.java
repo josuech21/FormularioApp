@@ -3,7 +3,7 @@ package com.example.formularioapp;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.Intent;
-import android.view.View; // IMPORTANTE: Necesario para android:onClick en XML
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,7 +40,7 @@ public class FeedActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // El código de los botones AGREGAR y COMPRAR SE MUEVE al método onArticuloClick.
+
     }
 
 

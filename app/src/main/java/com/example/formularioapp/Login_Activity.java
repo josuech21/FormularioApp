@@ -1,121 +1,172 @@
 package com.example.formularioapp;
 
-import androidx.appcompat.app.AppCompatActivity;
-import android.os.Bundle;
-import android.widget.*;
 import android.content.Intent;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Activity para manejar el inicio de sesión de usuarios existentes
+ * utilizando Firebase Authentication.
+ */
 public class Login_Activity extends AppCompatActivity {
 
-    // CAMPOS DE ENTRADA DE DATOS (EditText)
-    EditText txtEmailLogin;
-    EditText txtPasswordLogin;
+    private static final String TAG = "LoginActivity";
 
-    // BOTONES Y ENLACES (Button, TextView)
-    Button btnLogin;
-    TextView txtOlvidoPassword;
-    TextView txtIrARegistro; // Este TextView debe existir en el XML si quieres ir a Registro
+    // Componentes de UI
+    private EditText txtEmailLogin, txtPasswordLogin;
+    private Button btnLogin;
+    private TextView txtIrARegistro;
+
+    // Instancia de Firebase Authentication
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.iniciar_sesion);
 
-        // Conecta esta Activity con el layout de Login
-        setContentView(R.layout.iniciar_sesion); // Asegúrate de que este es el nombre de tu archivo XML de Login
+        // 1. Inicializar Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
 
-        // --- 1. Referencias a los elementos del XML ---
+        // 2. Inicializar Vistas (Ajusta estos IDs a tu layout XML)
         txtEmailLogin = findViewById(R.id.txtEmailLogin);
         txtPasswordLogin = findViewById(R.id.txtPasswordLogin);
         btnLogin = findViewById(R.id.btnLogin);
-        txtOlvidoPassword = findViewById(R.id.txtOlvidoPassword);
+        txtIrARegistro = findViewById(R.id.txtIrARegistro);
 
-
-
-
-        // --- 2. Lógica del Botón INICIAR SESIÓN (MODIFICADA) ---
-        btnLogin.setOnClickListener(v -> {
-            String email = txtEmailLogin.getText().toString().trim();
-            String password = txtPasswordLogin.getText().toString();
-
-            // Llama a la función de validación
-            if (validarCampos(email, password)) {
-
-                // Lógica simulada de autenticación exitosa (Aquí iría la llamada real al backend)
-                if (simularAutenticacion(email, password)) {
-
-                    Toast.makeText(Login_Activity.this, "¡Bienvenido! Sesión iniciada.", Toast.LENGTH_LONG).show();
-
-
-                    // ** LÓGICA DE NAVEGACIÓN SEGURA AL FEED **
-
-                    Intent feedIntent = new Intent(Login_Activity.this, FeedActivity.class);
-
-                    feedIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-                    // 3. Iniciar FeedActivity
-                    startActivity(feedIntent);
-
-                } else {
-                    Toast.makeText(Login_Activity.this, "Error de autenticación. Verifique sus credenciales.", Toast.LENGTH_LONG).show();
-                }
+        // 3. Configurar Listener del botón de Login
+        btnLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                iniciarSesion();
             }
         });
 
-
-        // --- 3. Lógica del Enlace ¿OLVIDASTE TU CONTRASEÑA? ---
-        txtOlvidoPassword.setOnClickListener(v -> {
-            Toast.makeText(Login_Activity.this, "Redirigiendo a recuperación de contraseña...",
-                    Toast.LENGTH_SHORT).show();
-            // Implementación pendiente: Navegación a la Activity de recuperación
+        // 4. Configurar Listener para ir a la pantalla de Registro
+        txtIrARegistro.setOnClickListener(v -> {
+            Intent intent = new Intent(Login_Activity.this, Registrarse_Activity.class);
+            startActivity(intent);
         });
-
-
-        // --- 4. Lógica del Enlace IR A REGISTRO (Si el TextView existe en tu layout) ---
-        if (txtIrARegistro != null) {
-            txtIrARegistro.setOnClickListener(v -> {
-                Intent intent = new Intent(Login_Activity.this, Registrarse_Activity.class);
-                startActivity(intent);
-            });
-        }
     }
 
+    /**
+     * Revisa si ya hay un usuario logueado al iniciar la Activity.
+     */
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Verifica si el usuario está actualmente logueado (non-null) y actualiza la UI.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if(currentUser != null){
+            // Si el usuario ya está logueado, lo enviamos directamente a la Home
+            irAHomeActivity();
+        }
+    }
 
     /**
      * Función para realizar las validaciones del formulario de Login.
      * @return true si ambos campos son válidos, false si no lo son.
      */
-    private boolean validarCampos(String email, String password) {
+    private boolean validarCampos() {
+        String email = txtEmailLogin.getText().toString().trim();
+        String password = txtPasswordLogin.getText().toString();
 
         // 1. Validación de campos vacíos
-        if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Debe ingresar su correo y contraseña",
-                    Toast.LENGTH_LONG).show();
+        if (TextUtils.isEmpty(email)) {
+            txtEmailLogin.setError("Ingrese su correo electrónico.");
+            return false;
+        }
+        if (TextUtils.isEmpty(password)) {
+            txtPasswordLogin.setError("Ingrese su contraseña.");
             return false;
         }
 
         // 2. Validación de formato de correo electrónico
-        final String EMAIL_PATTERN = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+        final String EMAIL_PATTERN = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[_A-Za-z]{2,})$";
         Pattern pattern = Pattern.compile(EMAIL_PATTERN);
         Matcher matcher = pattern.matcher(email);
 
         if (!matcher.matches()) {
-            Toast.makeText(this, "Por favor, introduzca un correo electrónico válido",
-                    Toast.LENGTH_LONG).show();
+            txtEmailLogin.setError("Por favor, introduzca un correo electrónico válido");
             return false;
         }
 
-        // Si ambas validaciones pasan
+        // 3. Validación de longitud de contraseña (Si quieres un mínimo de 6 o 8 caracteres aquí)
+        // Firebase Auth requiere un mínimo de 6, si tu regla es 8, la mantenemos aquí.
+        if (password.length() < 6) {
+            txtPasswordLogin.setError("La contraseña debe tener al menos 6 caracteres.");
+            return false;
+        }
+
+        // Si todas las validaciones pasan
         return true;
     }
 
+
     /**
-     * Función simulada para verificar credenciales. REEMPLAZAR con lógica real.
+     * Valida la entrada e inicia el proceso de inicio de sesión con Firebase.
      */
-    private boolean simularAutenticacion(String email, String password) {
-        // Por ahora, siempre devuelve true si los campos están llenos y son válidos.
-        // En un caso real, esto sería una llamada a tu servidor o Firebase.
-        return true;
+    private void iniciarSesion() {
+        // 1. Ejecutar validación de campos
+        if (!validarCampos()) {
+            return;
+        }
+
+        String email = txtEmailLogin.getText().toString().trim();
+        String password = txtPasswordLogin.getText().toString().trim();
+
+        // Deshabilitar botón y mostrar mensaje de progreso
+        btnLogin.setEnabled(false);
+        Toast.makeText(this, "Iniciando sesión...", Toast.LENGTH_SHORT).show();
+
+        // 2. Llamada a Firebase para iniciar sesión
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Login exitoso
+                            Log.d(TAG, "signInWithEmail:success");
+                            irAHomeActivity();
+                        } else {
+                            // Si el login falla (contraseña incorrecta, usuario no existe)
+                            Log.w(TAG, "signInWithEmail:failure", task.getException());
+                            // Firebase proporciona un mensaje de error que podemos usar
+                            String error = task.getException() != null ? task.getException().getMessage() : "Credenciales inválidas.";
+                            Toast.makeText(Login_Activity.this, "Error de inicio de sesión: " + error,
+                                    Toast.LENGTH_LONG).show();
+                            btnLogin.setEnabled(true);
+                        }
+                    }
+                });
+    }
+
+
+    private void irAHomeActivity() {
+
+        Intent intent = new Intent(Login_Activity.this, FeedActivity.class);
+
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
     }
 }
