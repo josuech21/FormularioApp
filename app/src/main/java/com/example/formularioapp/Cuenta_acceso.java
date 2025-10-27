@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import com.google.firebase.auth.FirebaseAuth; // 1. Importar FirebaseAuth
 
 // Esta Activity maneja la lógica de la pantalla de perfil/cuenta.
 public class Cuenta_acceso extends AppCompatActivity {
@@ -22,12 +23,18 @@ public class Cuenta_acceso extends AppCompatActivity {
     private EditText txtPerfilCorreo;
     private EditText txtPerfilContacto;
 
+    // Instancia de Firebase Authentication
+    private FirebaseAuth mAuth; // 2. Declarar la instancia
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // Conecta esta Activity con el layout de Mi Cuenta
         setContentView(R.layout.cuenta_acceso);
+
+        // 3. Inicializar Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
 
         // --- 1. Referencias a los elementos del XML ---
         btnHistorialCompras = findViewById(R.id.btnHistorialCompras);
@@ -41,17 +48,20 @@ public class Cuenta_acceso extends AppCompatActivity {
         txtPerfilCorreo = findViewById(R.id.txtPerfilCorreo);
         txtPerfilContacto = findViewById(R.id.txtPerfilContacto);
 
-        // CERRAR SESIÓN
+        // CERRAR SESIÓN (LÓGICA FUNCIONAL)
         btnCerrarSesion.setOnClickListener(v -> {
 
 
-            Toast.makeText(Cuenta_acceso.this, "Cerrando sesión. Volviendo a Login.", Toast.LENGTH_LONG).show();
+            mAuth.signOut();
 
-            // 2. Navegar a LoginActivity y limpiar toda la pila anterior (Feed, Cuenta, etc.)
+            Toast.makeText(Cuenta_acceso.this, "Sesión cerrada con éxito.", Toast.LENGTH_LONG).show();
+
+            // 5. Navegar a LoginActivity y limpiar toda la pila anterior (Feed, Cuenta, etc.)
             Intent intent = new Intent(this, Login_Activity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Limpia la pila
+            // Estos flags son cruciales para evitar que el usuario vuelva a Cuenta/Feed con el botón "Atrás"
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
-            finish();
+            finish(); // Finaliza la actividad actual (Cuenta_acceso)
         });
     }
 }
