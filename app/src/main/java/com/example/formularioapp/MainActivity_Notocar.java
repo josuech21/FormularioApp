@@ -4,7 +4,7 @@ import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.widget.*;
 import java.util.Calendar;
-public class MainActivity extends AppCompatActivity {
+public class MainActivity_Notocar extends AppCompatActivity {
     EditText txtNombre, txtApellido1, txtApellido2, txtCedula;
     Button btnFechaNacimiento, btnEnviar;
     TextView txtFechaSeleccionada;
@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
             anio = c.get(Calendar.YEAR);
 
             DatePickerDialog datePickerDialog = new DatePickerDialog(
-                    MainActivity.this,
+                    MainActivity_Notocar.this,
                     (view, year, month, dayOfMonth) -> {
                         txtFechaSeleccionada.setText(dayOfMonth + "/" + (month + 1) + "/" + year);
                     }, anio, mes, dia);
@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (nombre.isEmpty() || apellido1.isEmpty() || apellido2.isEmpty() || cedula.isEmpty() ||
                     fecha.equals("No seleccionada")) {
-                Toast.makeText(MainActivity.this, "Por favor complete todos los campos",
+                Toast.makeText(MainActivity_Notocar.this, "Por favor complete todos los campos",
                         Toast.LENGTH_SHORT).show();
             } else {
                 String mensaje = "Datos ingresados:\n" +
@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
                         "Apellidos: " + apellido1 + " " + apellido2 + "\n" +
                         "Cédula: " + cedula + "\n" +
                         "Fecha Nacimiento: " + fecha;
-                Toast.makeText(MainActivity.this, mensaje, Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity_Notocar.this, mensaje, Toast.LENGTH_LONG).show();
             }
         });
     }

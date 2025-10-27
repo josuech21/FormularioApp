@@ -34,6 +34,7 @@
             android:textSize="16sp"
             android:textStyle="bold" />
         <TextView
+            android:id="@+id/txtMiCuenta"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -45,6 +46,7 @@
             android:focusable="true"/>
 
         <TextView
+            android:id="@+id/txtMiCarrito"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -56,6 +58,7 @@
             android:textSize="16sp" />
 
     </LinearLayout>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -149,22 +152,23 @@
                             android:orientation="horizontal">
 
                             <Button
+                                android:id="@+id/btnAgregarChaqueta"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginEnd="8dp"
                                 android:layout_weight="1"
                                 android:backgroundTint="#8BC34A"
                                 android:text="Agregar"
-                                android:textColor="#FFFFFF" />
-
-                            <Button
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:backgroundTint="#607D8B"
-                                android:text="Comprar"
-                                android:textColor="#FFFFFF" />
-                        </LinearLayout>
+                                android:textColor="#FFFFFF"
+                                android:onClick="onArticuloClick"/> <Button
+                            android:id="@+id/btnComprarChaqueta"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:backgroundTint="#607D8B"
+                            android:text="Comprar"
+                            android:textColor="#FFFFFF"
+                            android:onClick="onArticuloClick"/> </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -177,7 +181,6 @@
                 app:cardCornerRadius="8dp"
                 app:cardElevation="4dp"
                 android:background="#FFFFFF">
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -246,27 +249,26 @@
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
                             <Button
-                                android:layout_width="0dp"
+                                android:id="@+id/btnAgregarSaco" android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="Agregar"
                                 android:backgroundTint="#8BC34A"
                                 android:textColor="#FFFFFF"
                                 android:enabled="false"
-                                android:layout_marginEnd="8dp"/>
-                            <Button
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="Comprar"
-                                android:backgroundTint="#607D8B"
-                                android:textColor="#FFFFFF"
-                                android:enabled="false"/>
-                        </LinearLayout>
+                                android:layout_marginEnd="8dp"
+                                android:onClick="onArticuloClick"/> <Button
+                            android:id="@+id/btnComprarSaco" android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Comprar"
+                            android:backgroundTint="#607D8B"
+                            android:textColor="#FFFFFF"
+                            android:enabled="false"
+                            android:onClick="onArticuloClick"/> </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
-
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
