@@ -60,10 +60,6 @@ public class PublicarArticulo_Activity extends AppCompatActivity {
 
         // C) Botón PUBLICAR / GUARDAR CAMBIOS
         btnPublicar.setOnClickListener(v -> {
-            // Lógica real:
-            // 1. Recoger todos los datos de los EditTexts (si se modificaron).
-            // 2. Enviar los datos actualizados a la base de datos (API).
-            // 3. Si el artículo es nuevo, se 'Publica'. Si se estaba editando, se 'Guarda'.
 
             Toast.makeText(this, "Artículo '" + txtNombreProducto.getText().toString() + "' actualizado y guardado.",
                     Toast.LENGTH_LONG).show();
@@ -82,18 +78,10 @@ public class PublicarArticulo_Activity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Simula la confirmación y eliminación de un artículo.
-     * En una app real, esto usaría un AlertDialog.
-     */
     private void confirmarYEliminarArticulo(int id, String nombre) {
         Toast.makeText(this, "Eliminando " + nombre + " (ID: " + id + ")...", Toast.LENGTH_LONG).show();
 
-        // Lógica real:
-        // 1. Llamar a la API para borrar el artículo.
-        // 2. Si es exitoso, navegar lejos de esta pantalla (finish() y volver a la lista del vendedor).
 
-        // Aquí puedes simular la acción:
         finish(); // Cierra la actividad para simular que el artículo ya no está
     }
 }

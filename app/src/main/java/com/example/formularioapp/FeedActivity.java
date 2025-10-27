@@ -24,9 +24,7 @@ public class FeedActivity extends AppCompatActivity {
         txtMiCuenta = findViewById(R.id.txtMiCuenta);
         txtMiCarrito = findViewById(R.id.txtMiCarrito);
 
-        // YA NO NECESITAS findViewById para los botones de artículo, el XML lo maneja.
 
-        // --- 2. Lógica de Navegación de la Barra Superior ---
 
         // Navegación a Mi Cuenta
         txtMiCuenta.setOnClickListener(v -> {

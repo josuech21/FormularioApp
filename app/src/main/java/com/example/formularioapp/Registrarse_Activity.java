@@ -119,12 +119,7 @@ public class Registrarse_Activity extends AppCompatActivity {
     }
 
 
-    /**
-     * Maneja el flujo de registro:
-     * 1. Autentica al usuario con Email/Password.
-     * 2. Si es exitoso, guarda el perfil (nombre, teléfono, etc.) en Firestore.
-     * 3. Redirige al Login.
-     */
+
     private void registrarUsuario() {
         // 1. Validar campos
         if (!validarCampos()) {

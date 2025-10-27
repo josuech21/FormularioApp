@@ -41,20 +41,9 @@ public class Cuenta_acceso extends AppCompatActivity {
         txtPerfilCorreo = findViewById(R.id.txtPerfilCorreo);
         txtPerfilContacto = findViewById(R.id.txtPerfilContacto);
 
-
-
-
-        // --- 2. Configuración de Listeners (Funcionalidad Real) ---
-
-
-
-
-        // CERRAR SESIÓN (LÓGICA CRÍTICA)
+        // CERRAR SESIÓN
         btnCerrarSesion.setOnClickListener(v -> {
-            // 1. Limpiar datos de la sesión (ej: token de usuario, SharedPreferences)
-            // SharedPreferences.Editor editor = getSharedPreferences("user_data", MODE_PRIVATE).edit();
-            // editor.clear();
-            // editor.apply();
+
 
             Toast.makeText(Cuenta_acceso.this, "Cerrando sesión. Volviendo a Login.", Toast.LENGTH_LONG).show();
 
@@ -62,7 +51,7 @@ public class Cuenta_acceso extends AppCompatActivity {
             Intent intent = new Intent(this, Login_Activity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Limpia la pila
             startActivity(intent);
-            finish(); // Finaliza esta actividad
+            finish();
         });
     }
 }

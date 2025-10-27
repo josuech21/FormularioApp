@@ -22,10 +22,7 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Activity para manejar el inicio de sesión de usuarios existentes
- * utilizando Firebase Authentication.
- */
+
 public class Login_Activity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
@@ -52,7 +49,6 @@ public class Login_Activity extends AppCompatActivity {
         btnLogin = findViewById(R.id.btnLogin);
         txtIrARegistro = findViewById(R.id.txtIrARegistro);
 
-        // 3. Configurar Listener del botón de Login
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,16 +56,14 @@ public class Login_Activity extends AppCompatActivity {
             }
         });
 
-        // 4. Configurar Listener para ir a la pantalla de Registro
+
         txtIrARegistro.setOnClickListener(v -> {
             Intent intent = new Intent(Login_Activity.this, Registrarse_Activity.class);
             startActivity(intent);
         });
     }
 
-    /**
-     * Revisa si ya hay un usuario logueado al iniciar la Activity.
-     */
+
     @Override
     public void onStart() {
         super.onStart();
@@ -81,10 +75,6 @@ public class Login_Activity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Función para realizar las validaciones del formulario de Login.
-     * @return true si ambos campos son válidos, false si no lo son.
-     */
     private boolean validarCampos() {
         String email = txtEmailLogin.getText().toString().trim();
         String password = txtPasswordLogin.getText().toString();
@@ -109,8 +99,7 @@ public class Login_Activity extends AppCompatActivity {
             return false;
         }
 
-        // 3. Validación de longitud de contraseña (Si quieres un mínimo de 6 o 8 caracteres aquí)
-        // Firebase Auth requiere un mínimo de 6, si tu regla es 8, la mantenemos aquí.
+
         if (password.length() < 6) {
             txtPasswordLogin.setError("La contraseña debe tener al menos 6 caracteres.");
             return false;
@@ -121,9 +110,7 @@ public class Login_Activity extends AppCompatActivity {
     }
 
 
-    /**
-     * Valida la entrada e inicia el proceso de inicio de sesión con Firebase.
-     */
+
     private void iniciarSesion() {
         // 1. Ejecutar validación de campos
         if (!validarCampos()) {
