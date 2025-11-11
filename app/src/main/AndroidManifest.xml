@@ -13,15 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FormularioApp">
 
-        <activity
-            android:name=".Geolocator"
-            android:exported="true">
-            <!-- Este bloque le dice a Android que esta es la pantalla que se lanza desde el ícono -->
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+
 
         <activity
             android:name=".Registrarse_Activity"
