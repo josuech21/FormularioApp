@@ -109,8 +109,13 @@ public class Login_Activity extends AppCompatActivity {
         return true;
     }
 
-
-
+   /* private void iniciarSesionConGoogle() {
+        // 1. Ejecutar validación de campos
+        if (!validarCampos()) {
+            return;
+        }
+        //redirigir a url de crear cuenta con google o alguna auth existente con firebase
+*/
     private void iniciarSesion() {
         // 1. Ejecutar validación de campos
         if (!validarCampos()) {

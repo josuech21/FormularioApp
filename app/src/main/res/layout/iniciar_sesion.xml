@@ -2,7 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#2C3640">
+    android:background="@drawable/background2">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -54,6 +54,21 @@
             android:padding="5dp"
             android:layout_marginBottom="30dp"/>
 
+
+
+        <ImageView
+            android:id="@+id/btnGoogle"
+            android:layout_width="90dp"
+            android:layout_height="48dp"
+            android:contentDescription="Icono de google"
+            android:scaleType="centerInside"
+            android:src="@drawable/google" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+
         <Button
             android:id="@+id/btnLogin"
             android:layout_width="match_parent"
@@ -69,10 +84,10 @@
             android:id="@+id/txtIrARegistro"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="¿No tienes cuenta? Regístrate aquí."
-            android:textColor="#4A90E2"
             android:layout_gravity="center"
-            android:padding="5dp"/>
+            android:padding="5dp"
+            android:text="¿No tienes cuenta? Regístrate aquí."
+            android:textColor="#4A90E2" />
 
     </LinearLayout>
 </ScrollView>

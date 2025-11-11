@@ -42,6 +42,8 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+    //libreria para animacion (en caso de requerir):
+    implementation ("com.airbnb.android:lottie:6.7.1")
 
     // 2. DEPENDENCIAS DE FIREBASE
     // Importar la Firebase BoM (Bill of Materials) para gestionar versiones
@@ -61,5 +63,6 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
 
 }

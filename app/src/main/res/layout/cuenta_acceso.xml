@@ -85,48 +85,48 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_marginBottom="16dp"
         android:background="#FFFFFF"
         android:elevation="2dp"
+        android:orientation="vertical"
         android:paddingHorizontal="16dp"
-        android:paddingVertical="8dp"
-        android:layout_marginBottom="16dp">
+        android:paddingVertical="8dp">
 
         <Button
             android:id="@+id/btnHistorialCompras"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Ver Historial de Compras"
+            android:layout_marginBottom="8dp"
             android:backgroundTint="#607D8B"
-            android:textColor="#FFFFFF"
-            android:layout_marginBottom="8dp"/>
+            android:text="Ver Historial de Compras"
+            android:textColor="#FFFFFF" />
 
         <Button
             android:id="@+id/btnModificarDatos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Modificar mis datos (Contraseña, etc.)"
+            android:layout_marginBottom="8dp"
             android:backgroundTint="#607D8B"
-            android:textColor="#FFFFFF"
-            android:layout_marginBottom="8dp"/>
+            android:text="Modificar mis datos (Contraseña, etc.)"
+            android:textColor="#FFFFFF" />
 
         <Button
             android:id="@+id/btnMetodosPago"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Gestionar Métodos de Pago"
+            android:layout_marginBottom="8dp"
             android:backgroundTint="#607D8B"
-            android:textColor="#FFFFFF"
-            android:layout_marginBottom="8dp"/>
+            android:text="Gestionar Métodos de Pago"
+            android:textColor="#FFFFFF" />
 
         <Button
             android:id="@+id/btnGestionProductos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Gestionar mis Productos (Vendedor)"
+            android:layout_marginBottom="8dp"
             android:backgroundTint="#8BC34A"
-            android:textColor="#212121"
-            android:layout_marginBottom="8dp"/>
+            android:text="Gestionar mis Productos (Vendedor)"
+            android:textColor="#212121" />
 
     </LinearLayout>
 
@@ -134,9 +134,9 @@
         android:id="@+id/btnCerrarSesion"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:text="CERRAR SESIÓN"
+        android:layout_marginTop="8dp"
         android:backgroundTint="#F44336"
-        android:textColor="#FFFFFF"
-        android:layout_marginTop="8dp"/>
+        android:text="CERRAR SESIÓN"
+        android:textColor="#FFFFFF" />
 
 </LinearLayout>
