@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20dp"
+    android:background="#F9F9F9"
+    tools:context=".Geolocator">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:text="Buscador de Centro Comercial Más Cercano"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="24dp"
+            android:textColor="#3F51B5"/>
+
+        <!-- CAMPO LATITUD -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tu Latitud (Ej: 9.9342)"
+            android:textStyle="bold"
+            android:layout_marginTop="8dp"/>
+
+        <EditText
+            android:id="@+id/editLatitud"
+            android:hint="Ingresa tu latitud actual"
+            android:inputType="numberDecimal|numberSigned"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:padding="12dp"
+            android:background="@android:drawable/editbox_background"/>
+
+        <!-- CAMPO LONGITUD -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tu Longitud (Ej: -84.0565)"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"/>
+
+        <EditText
+            android:id="@+id/editLongitud"
+            android:hint="Ingresa tu longitud actual"
+            android:inputType="numberDecimal|numberSigned"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:padding="12dp"
+            android:background="@android:drawable/editbox_background"/>
+
+        <!-- BOTÓN DE BÚSQUEDA -->
+        <Button
+            android:id="@+id/btnBuscar"
+            android:text="Buscar Centro Comercial Más Cercano"
+            android:layout_marginTop="32dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#FF9800"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:padding="15dp"/>
+
+        <!-- RESULTADO -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Resultado de la Búsqueda:"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:layout_marginTop="40dp"
+            android:textColor="#3F51B5"/>
+
+        <TextView
+            android:id="@+id/textResultado"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Ingresa tus coordenadas y presiona Buscar."
+            android:textSize="18sp"
+            android:padding="16dp"
+            android:textColor="#333333"
+            android:background="#EEEEEE"
+            android:lineSpacingExtra="4dp"
+            android:minHeight="100dp"/>
+
+    </LinearLayout>
+</ScrollView>
