@@ -3,6 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.formularioapp">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -11,14 +15,12 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.FormularioApp">
-
-
+        android:theme="@style/Theme.FormularioApp"
+        tools:targetApi="31">
 
         <activity
             android:name=".Registrarse_Activity"
             android:exported="true">
-            <!-- Este bloque le dice a Android que esta es la pantalla que se lanza desde el ícono -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -29,10 +31,6 @@
             android:name=".Login_Activity"
             android:exported="false" />
 
-        <!-- Activity para el Feed -->
-        <activity
-            android:name=".MiCuentaActivity"
-            android:exported="false" />
         <activity
             android:name=".FeedActivity"
             android:exported="true">
@@ -42,8 +40,29 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".MiCuentaActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".HistorialdeCompras_Activity"
+            android:exported="false"
+            />
+
         <activity android:name=".Micarrito_Activity" />
 
-    </application>
+        <activity
+            android:name=".Metododepago_Activity"
+            android:exported="false"
+            android:label="Métodos de Pago" />
 
+        <activity
+            android:name=".PublicarArticulo_Activity"
+            android:exported="false"
+            android:label="Mis Artículos en Venta"
+            android:parentActivityName=".FeedActivity" />
+
+
+
+    </application>
 </manifest>

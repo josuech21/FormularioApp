@@ -2,85 +2,98 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#2C3640"> <LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:background="#FFFFFF"
-    android:padding="24dp"
-    android:layout_marginHorizontal="20dp"
-    android:layout_marginTop="50dp"
-    android:layout_marginBottom="50dp">
+    android:background="#2C3640">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Crea tu Cuenta"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:textColor="#212121"
-        android:layout_marginBottom="32dp"/>
+        android:orientation="vertical"
+        android:background="#FFFFFF"
+        android:padding="24dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="50dp">
 
-    <EditText
-        android:id="@+id/txtNombreRegistro"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:hint="Nombre completo"
-        android:inputType="textPersonName"
-        android:paddingHorizontal="10dp"
-        android:background="@android:drawable/editbox_background_normal"
-        android:layout_marginBottom="16dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Crea tu Cuenta"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textColor="#212121"
+            android:layout_marginBottom="32dp"/>
 
-    <EditText
-        android:id="@+id/txtEmailRegistro"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:hint="Correo Electrónico"
-        android:inputType="textEmailAddress"
-        android:paddingHorizontal="10dp"
-        android:background="@android:drawable/editbox_background_normal"
-        android:layout_marginBottom="16dp"/>
+        <EditText
+            android:id="@+id/txtNombreRegistro"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="Nombre completo"
+            android:inputType="textPersonName"
+            android:paddingHorizontal="10dp"
+            android:background="@android:drawable/editbox_background_normal"
+            android:layout_marginBottom="16dp"/>
 
-    <EditText
-        android:id="@+id/txtPasswordRegistro"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:hint="Contraseña (mín. 8 caracteres)"
-        android:inputType="textPassword"
-        android:paddingHorizontal="10dp"
-        android:background="@android:drawable/editbox_background_normal"
-        android:layout_marginBottom="16dp"/>
+        <EditText
+            android:id="@+id/txtEmailRegistro"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="Correo Electrónico"
+            android:inputType="textEmailAddress"
+            android:paddingHorizontal="10dp"
+            android:background="@android:drawable/editbox_background_normal"
+            android:layout_marginBottom="16dp"/>
 
-    <EditText
-        android:id="@+id/txtTelefonoRegistro"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:hint="Número de Contacto"
-        android:inputType="phone"
-        android:paddingHorizontal="10dp"
-        android:background="@android:drawable/editbox_background_normal"
-        android:layout_marginBottom="16dp"/>
+        <EditText
+            android:id="@+id/txtPasswordRegistro"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="Contraseña (mín. 6 caracteres)"
+            android:inputType="textPassword"
+            android:paddingHorizontal="10dp"
+            android:background="@android:drawable/editbox_background_normal"
+            android:layout_marginBottom="16dp"/>
 
-    <Button
-        android:id="@+id/btnRegistrar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="REGISTRAR Y COMENZAR"
-        android:backgroundTint="#8BC34A"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"
-        android:layout_marginTop="20dp"/>
+        <EditText
+            android:id="@+id/txtTelefonoRegistro"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="Número de Contacto"
+            android:inputType="phone"
+            android:paddingHorizontal="10dp"
+            android:background="@android:drawable/editbox_background_normal"
+            android:layout_marginBottom="24dp"/>
 
-    <TextView
-        android:id="@+id/txtIrALogin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="¿Ya tienes cuenta? Inicia Sesión"
-        android:gravity="center"
-        android:textColor="#4A90E2"
-        android:padding="10dp"
-        android:layout_marginTop="20dp"/>
+        <Switch
+            android:id="@+id/switchEsVendedor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Quiero ser Vendedor (Habilita Publicación de Artículos)"
+            android:textColor="#212121"
+            android:textSize="16sp"
+            android:layout_marginBottom="20dp"
+            android:paddingHorizontal="5dp"
+            android:checked="false" />
 
-</LinearLayout>
+        <Button
+            android:id="@+id/btnRegistrar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="REGISTRAR Y COMENZAR"
+            android:backgroundTint="#8BC34A"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:layout_marginTop="20dp"/>
+
+        <TextView
+            android:id="@+id/txtIrALogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="¿Ya tienes cuenta? Inicia Sesión"
+            android:gravity="center"
+            android:textColor="#4A90E2"
+            android:padding="10dp"
+            android:layout_marginTop="20dp"/>
+
+    </LinearLayout>
 </ScrollView>

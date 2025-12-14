@@ -1,13 +1,14 @@
 plugins {
     alias(libs.plugins.android.application)
 
-
+    // Necesario para integrar las dependencias de Google Services (Firebase)
     id("com.google.gms.google-services")
 }
 
 android {
     namespace = "com.example.formularioapp"
     compileSdk {
+        // Asegúrate de que esta versión coincida con tu entorno
         version = release(36)
     }
 
@@ -42,12 +43,21 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+
     //libreria para animacion (en caso de requerir):
     implementation ("com.airbnb.android:lottie:6.7.1")
 
+    // ===================================================
+    // 1. GLIDE (Para carga de imágenes)
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    // ¡¡¡LÍNEA AÑADIDA!!!: Necesaria para el procesamiento de anotaciones de Glide
+    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
+
+    // FIREBASE UI (Para el adaptador de RecyclerView de Firestore)
+    implementation("com.firebaseui:firebase-ui-firestore:8.0.2")
+
     // 2. DEPENDENCIAS DE FIREBASE
     // Importar la Firebase BoM (Bill of Materials) para gestionar versiones
-    // Esto asegura que todas las librerías de Firebase que uses sean compatibles.
     implementation(platform("com.google.firebase:firebase-bom:34.0.0"))
 
     // Firebase Authentication (para Login y Registro)
@@ -63,6 +73,4 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-
-
 }

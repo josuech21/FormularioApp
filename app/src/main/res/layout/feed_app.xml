@@ -25,6 +25,7 @@
         android:elevation="4dp" >
 
         <TextView
+            android:id="@+id/txtFeed"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -32,7 +33,23 @@
             android:gravity="center"
             android:textColor="#607D8B"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:clickable="true"
+            android:focusable="true"/>
+
+        <TextView
+            android:id="@+id/txtVender"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.2"
+            android:text="VENDER"
+            android:gravity="center"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:background="#1B5E20"  android:clickable="true"
+            android:focusable="true"/>
+
         <TextView
             android:id="@+id/txtMiCuenta"
             android:layout_width="0dp"
@@ -56,219 +73,15 @@
             android:text="Mi Carrito"
             android:textColor="#757575"
             android:textSize="16sp" />
-
     </LinearLayout>
 
-    <ScrollView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewArticulos"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingTop="8dp"
-        android:paddingBottom="8dp">
+        android:paddingBottom="8dp"
+        android:clipToPadding="false"
+        />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginVertical="8dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp"
-                android:background="#FFFFFF">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="250dp">
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/chaquetacuero"
-                            android:contentDescription="Imagen de Chaqueta"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="¡DISPONIBLE!"
-                            android:background="#8BC34A"
-                            android:textColor="#212121"
-                            android:paddingHorizontal="8dp"
-                            android:paddingVertical="4dp"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            android:layout_gravity="top|start"
-                            android:layout_marginTop="12dp"
-                            android:layout_marginStart="12dp"/>
-                    </FrameLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="12dp">
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="8dp"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="Chaqueta de Cuero Vintage"
-                                android:textColor="#212121"
-                                android:textSize="18sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="₡ 19,250"
-                                android:textColor="#607D8B"
-                                android:textSize="18sp"
-                                android:textStyle="bold" />
-                        </LinearLayout>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="12dp"
-                            android:text="Publicado el 18/10/2025"
-                            android:textColor="#9E9E9E"
-                            android:textSize="12sp" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-
-                            <Button
-                                android:id="@+id/btnAgregarChaqueta"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginEnd="8dp"
-                                android:layout_weight="1"
-                                android:backgroundTint="#8BC34A"
-                                android:text="Agregar"
-                                android:textColor="#FFFFFF"
-                                android:onClick="onArticuloClick"/> <Button
-                            android:id="@+id/btnComprarChaqueta"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:backgroundTint="#607D8B"
-                            android:text="Comprar"
-                            android:textColor="#FFFFFF"
-                            android:onClick="onArticuloClick"/> </LinearLayout>
-                    </LinearLayout>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginVertical="8dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp"
-                android:background="#FFFFFF">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="250dp">
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/sacolana"
-                            android:contentDescription="Imagen del Saco de Lana"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="NO DISPONIBLE"
-                            android:background="#FF9800"
-                            android:textColor="#212121"
-                            android:paddingHorizontal="8dp"
-                            android:paddingVertical="4dp"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            android:layout_gravity="top|start"
-                            android:layout_marginTop="12dp"
-                            android:layout_marginStart="12dp"/>
-                    </FrameLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="12dp">
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:layout_marginBottom="8dp">
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="Saco de Lana Clásico"
-                                android:textSize="18sp"
-                                android:textStyle="bold"
-                                android:textColor="#212121"/>
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="₡ 25,295"
-                                android:textSize="18sp"
-                                android:textStyle="bold"
-                                android:textColor="#607D8B"/>
-                        </LinearLayout>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Publicado el 01/09/2025"
-                            android:textSize="12sp"
-                            android:textColor="#9E9E9E"
-                            android:layout_marginBottom="12dp"/>
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-                            <Button
-                                android:id="@+id/btnAgregarSaco" android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="Agregar"
-                                android:backgroundTint="#8BC34A"
-                                android:textColor="#FFFFFF"
-                                android:enabled="false"
-                                android:layout_marginEnd="8dp"
-                                android:onClick="onArticuloClick"/> <Button
-                            android:id="@+id/btnComprarSaco" android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Comprar"
-                            android:backgroundTint="#607D8B"
-                            android:textColor="#FFFFFF"
-                            android:enabled="false"
-                            android:onClick="onArticuloClick"/> </LinearLayout>
-                    </LinearLayout>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-        </LinearLayout>
-    </ScrollView>
 </LinearLayout>

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
@@ -16,39 +15,74 @@
             android:layout_width="match_parent"
             android:layout_height="250dp"
             android:background="#E0E0E0"
-            android:contentDescription="Foto de la Prenda"
-            android:scaleType="centerCrop" />
+            android:contentDescription="Foto del producto"
+            android:scaleType="centerCrop"
+            android:src="@android:drawable/ic_menu_gallery" />
 
-        <TextView
+        <Button
+            android:id="@+id/btnSeleccionarFoto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:text="Seleccionar Foto"
+            android:backgroundTint="#03A9F4"
+            android:textColor="@android:color/white" />
+
+        <EditText
             android:id="@+id/txtNombreProducto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Nombre de artículo"
             android:textSize="24sp"
             android:textStyle="bold"
-            android:layout_marginTop="16dp"/>
+            android:layout_marginTop="16dp"
+            android:hint="Ingrese el nombre del artículo"
+            android:inputType="textCapSentences"
+            android:paddingBottom="48dp"
+            android:background="@android:color/transparent"
+            android:text="" />
 
-        <TextView
+        <EditText
             android:id="@+id/txtPrecioProducto"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="₡Precio"
+            android:layout_height="48dp"
             android:textSize="20sp"
             android:textColor="#212121"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="16dp"
+            android:hint="(Solo números)"
+            android:background="@android:color/transparent"
+            android:inputType="numberDecimal"
+            android:text=""/>
+
+        <EditText
+            android:id="@+id/txtDetalleProducto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Añade una descripción o detalle del producto"
+            android:minLines="3"
+            android:maxLines="6"
+            android:padding="8dp"
+            android:inputType="textMultiLine"
+            android:background="@android:color/transparent"
+            android:gravity="top|start"
+            android:layout_marginBottom="16dp"
+            android:text=""/>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="47dp"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/txtNombreVendedor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="(Nombre del vendedor)"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:focusable="false"
+                android:clickable="false" />
 
             <RatingBar
                 android:id="@+id/ratingVendedor"
@@ -67,13 +101,6 @@
                 android:text="(5)" />
         </LinearLayout>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:textColor="#607D8B"
-            android:textStyle="bold" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -87,7 +114,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Modificar"
-                android:backgroundTint="#FF9800"
+                android:backgroundTint="#8BC34A"
                 android:layout_marginEnd="8dp"/>
 
             <Button
@@ -101,15 +128,18 @@
 
         <Switch
             android:id="@+id/switchDisponible"
-            android:layout_width="wrap_content"
-            android:layout_height="69dp"
-            android:layout_marginTop="20dp"
-            android:text="Vendido / Disponible" />
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="12dp"
+            android:paddingVertical="8dp"
+            android:text="Vendido / Disponible"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="43dp"
-            android:layout_marginVertical="24dp"
+            android:layout_height="1dp"
+            android:layout_marginVertical="16dp"
             android:background="#E0E0E0" />
 
         <Button
@@ -117,8 +147,8 @@
             android:layout_width="match_parent"
             android:layout_height="78dp"
             android:layout_marginBottom="16dp"
-            android:backgroundTint="#8BC34A"
-            android:text="Publicar Artículo"
+            android:backgroundTint="#4CAF50"
+            android:text="PUBLICAR ARTÍCULO"
             android:textColor="#FFFFFF" />
 
         <TextView
@@ -128,13 +158,15 @@
             android:textStyle="bold"
             android:layout_marginTop="8dp"/>
 
-        <View
+        <TextView
+            android:id="@+id/txtMapaPlaceholder"
             android:layout_width="match_parent"
             android:layout_height="96dp"
             android:layout_marginTop="8dp"
             android:background="#BDBDBD"
             android:gravity="center"
-            android:text="[Aquí se mostraría el Mapa]" />
+            android:text="[Aquí se mostraría el Mapa]"
+            android:textColor="#616161" />
 
     </LinearLayout>
 </ScrollView>

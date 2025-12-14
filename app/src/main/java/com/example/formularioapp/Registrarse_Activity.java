@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.CompoundButton; // Importación necesaria para Switch o CheckBox
+import android.widget.Switch; // Se asume que deseas un Switch o Checkbox para "es vendedor"
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,7 +21,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore; // ¡NUEVA IMPORTACIÓN!
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,10 +37,11 @@ public class Registrarse_Activity extends AppCompatActivity {
     private EditText txtNombreRegistro, txtEmailRegistro, txtPasswordRegistro, txtTelefonoRegistro;
     private Button btnRegistrar;
     private TextView txtIrALogin;
+    private Switch switchEsVendedor; // <<-- Agregamos un Switch para decidir el rol
 
     // Instancias de Firebase
     private FirebaseAuth mAuth;
-    private FirebaseFirestore mFirestore; // Instancia de Firestore para guardar datos
+    private FirebaseFirestore mFirestore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +50,7 @@ public class Registrarse_Activity extends AppCompatActivity {
 
         // 1. Inicializar Firebase Auth y Firestore
         mAuth = FirebaseAuth.getInstance();
-        mFirestore = FirebaseFirestore.getInstance(); // Inicializar Firestore
+        mFirestore = FirebaseFirestore.getInstance();
 
         // 2. Inicializar Vistas
         txtNombreRegistro = findViewById(R.id.txtNombreRegistro);
@@ -56,6 +59,12 @@ public class Registrarse_Activity extends AppCompatActivity {
         txtTelefonoRegistro = findViewById(R.id.txtTelefonoRegistro);
         btnRegistrar = findViewById(R.id.btnRegistrar);
         txtIrALogin = findViewById(R.id.txtIrALogin);
+        // **********************************************
+        // ASUME que tienes un componente Switch/CheckBox en tu layout para el rol
+        // Si no tienes uno, simplemente omite esta línea y establece el rol a 'false' en 'registrarUsuario'
+        switchEsVendedor = findViewById(R.id.switchEsVendedor);
+        // **********************************************
+
 
         // 3. Configurar Listener del botón
         btnRegistrar.setOnClickListener(new View.OnClickListener() {
@@ -108,11 +117,18 @@ public class Registrarse_Activity extends AppCompatActivity {
             return false;
         }
 
-
+        // 3. Validación de longitud
         if (password.length() < 6) {
             txtPasswordRegistro.setError("La contraseña debe tener al menos 6 caracteres (Firebase).");
             return false;
         }
+
+        // >> Validación básica de teléfono (Mínimo 8 dígitos) <<
+        if (telefono.length() < 8) {
+            txtTelefonoRegistro.setError("El teléfono debe tener al menos 8 dígitos.");
+            return false;
+        }
+
 
         // Si todas las validaciones pasan
         return true;
@@ -126,11 +142,14 @@ public class Registrarse_Activity extends AppCompatActivity {
             return;
         }
 
-        // Obtener textos después de la validación
+        // Obtener textos y rol después de la validación
         final String nombre = txtNombreRegistro.getText().toString().trim();
         final String email = txtEmailRegistro.getText().toString().trim();
         String password = txtPasswordRegistro.getText().toString();
         final String telefono = txtTelefonoRegistro.getText().toString().trim();
+        // >> OBTENER EL ROL DEL SWITCH <<
+        final boolean esVendedor = switchEsVendedor != null && switchEsVendedor.isChecked();
+
 
         // Deshabilitar botón y mostrar mensaje de progreso
         btnRegistrar.setEnabled(false);
@@ -152,17 +171,19 @@ public class Registrarse_Activity extends AppCompatActivity {
                                 // 3.1. Crear el objeto Map (perfil del usuario)
                                 Map<String, Object> userProfile = new HashMap<>();
                                 userProfile.put("uid", user.getUid());
-                                userProfile.put("nombre", nombre);
+                                userProfile.put("nombre", nombre); // Corregido: usa la variable local
                                 userProfile.put("email", email);
                                 userProfile.put("telefono", telefono);
-                                userProfile.put("is_vendedor", false); // Opcional: añade un campo booleano
+                                userProfile.put("esVendedor", esVendedor); // <<-- CAMPO DE ROL AGREGADO
+
 
                                 // 3.2. Guardar el documento en la colección 'usuarios'
                                 mFirestore.collection("usuarios")
                                         .document(user.getUid()) // Usar el UID como ID del documento
                                         .set(userProfile)
                                         .addOnCompleteListener(firestoreTask -> {
-                                            btnRegistrar.setEnabled(true); // Habilitar de nuevo al finalizar la operación
+
+                                            btnRegistrar.setEnabled(true); // >> Habilitar de nuevo al finalizar la operación (éxito) <<
 
                                             if (firestoreTask.isSuccessful()) {
                                                 Log.d(TAG, "Documento de usuario guardado en Firestore!");
@@ -176,20 +197,19 @@ public class Registrarse_Activity extends AppCompatActivity {
                                             } else {
                                                 // Fallo al guardar en Firestore
                                                 Log.w(TAG, "Error al guardar datos de perfil en Firestore", firestoreTask.getException());
-                                                // Nota: Si esto falla, el usuario ya existe en Auth, por lo que es mejor
-                                                // mostrar un error y que lo intente de nuevo o borrar el usuario de Auth.
                                                 Toast.makeText(Registrarse_Activity.this, "Error al guardar datos de perfil. Intente de nuevo.", Toast.LENGTH_LONG).show();
                                             }
                                         });
 
                             }
                         } else {
-                            // 3. Si falla el registro en Authentication (ej. email ya registrado, contraseña débil, etc.)
+                            // 3. Si falla el registro en Authentication
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
                             String error = task.getException() != null ? task.getException().getMessage() : "Error desconocido.";
                             Toast.makeText(Registrarse_Activity.this, "Fallo el registro: " + error,
                                     Toast.LENGTH_LONG).show();
-                            btnRegistrar.setEnabled(true);
+
+                            btnRegistrar.setEnabled(true); // >> Habilitar de nuevo al finalizar la operación (fallo) <<
                         }
                     }
                 });
