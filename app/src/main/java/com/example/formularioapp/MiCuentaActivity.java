@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View; // Necesario para View.VISIBLE/GONE
 import android.widget.Toast;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
@@ -29,9 +30,9 @@ public class MiCuentaActivity extends AppCompatActivity {
     private TextInputEditText txtPerfilCorreo;
     private TextInputEditText txtPerfilContacto;
     private MaterialButton btnHistorialCompras;
-    private MaterialButton btnModificarDatos; // El botón interruptor
+    private MaterialButton btnModificarDatos;
     private MaterialButton btnMetodosPago;
-    private MaterialButton btnGestionProductos;
+    private MaterialButton btnGestionProductos; // 🔴 El botón verde
 
     private boolean modoEdicionActivo = false;
 
@@ -51,6 +52,7 @@ public class MiCuentaActivity extends AppCompatActivity {
 
         vincularVistas();
         establecerEstadoEdicion(false);
+        // La carga de datos debe ejecutarse primero para leer el permiso de vendedor
         cargarDatosPerfilDesdeFirestore();
         configurarListenersAdicionales();
     }
@@ -63,7 +65,7 @@ public class MiCuentaActivity extends AppCompatActivity {
         btnHistorialCompras = findViewById(R.id.btnHistorial);
         btnModificarDatos = findViewById(R.id.btnModificar);
         btnMetodosPago = findViewById(R.id.btnMetodosPago);
-        btnGestionProductos = findViewById(R.id.btnProductos);
+        btnGestionProductos = findViewById(R.id.btnProductos); // Asumimos este ID
         btnCerrarSesion = findViewById(R.id.btnCerrarSesion);
     }
 
@@ -83,7 +85,6 @@ public class MiCuentaActivity extends AppCompatActivity {
     }
 
 
-
     private void cargarDatosPerfilDesdeFirestore() {
         if (currentUser != null) {
             String userId = currentUser.getUid();
@@ -98,12 +99,20 @@ public class MiCuentaActivity extends AppCompatActivity {
                             String nombre = documentSnapshot.getString("nombre");
                             String contacto = documentSnapshot.getString("telefono");
 
+                            // 🟢 Leer el permiso de vendedor (Firestore lo devuelve como Boolean)
+                            boolean esVendedor = documentSnapshot.getBoolean("esVendedor") != null &&
+                                    documentSnapshot.getBoolean("esVendedor");
+
                             if (txtPerfilNombre != null && nombre != null) {
                                 txtPerfilNombre.setText(nombre);
                             }
                             if (txtPerfilContacto != null && contacto != null) {
                                 txtPerfilContacto.setText(contacto);
                             }
+
+                            // 🟢 Configurar el botón de gestión basado en el permiso
+                            configurarBotonGestionVendedor(esVendedor, userId);
+
                         } else {
                             Log.w(TAG, "Documento de usuario no encontrado en Firestore.");
                         }
@@ -116,6 +125,28 @@ public class MiCuentaActivity extends AppCompatActivity {
             cerrarSesion();
         }
     }
+
+    /**
+     * Muestra/Oculta el botón de gestión y configura el RepositorioInventarioVendedor.
+     */
+    private void configurarBotonGestionVendedor(boolean esVendedor, String userId) {
+        if (btnGestionProductos == null) return;
+
+        if (esVendedor) {
+            // 1. Si es vendedor, el botón es visible
+            btnGestionProductos.setVisibility(View.VISIBLE);
+
+            // 2. Establecer el ID del vendedor logueado en el Repositorio
+            RepositorioInventarioVendedor.setVendedorActual(userId);
+
+        } else {
+            // 3. Si no es vendedor, el botón es invisible
+            btnGestionProductos.setVisibility(View.GONE);
+            // 4. Asegurarse de que el repositorio esté limpio o no autorizado
+            RepositorioInventarioVendedor.setVendedorActual(null);
+        }
+    }
+
 
     private void configurarListenersAdicionales() {
 
@@ -141,17 +172,26 @@ public class MiCuentaActivity extends AppCompatActivity {
         // 3. GESTIONAR MÉTODOS DE PAGO (NAVEGACIÓN)
         if (btnMetodosPago != null) {
             btnMetodosPago.setOnClickListener(v -> {
-                // Navegación a la Activity dedicada para métodos de pago
                 Intent intent = new Intent(MiCuentaActivity.this, Metododepago_Activity.class);
                 startActivity(intent);
             });
         }
 
-        // 4. GESTIÓN DE PRODUCTOS (Placeholder para el siguiente paso)
+        // 4. GESTIÓN DE PRODUCTOS (FUNCIONALIDAD VENDEDOR)
         if (btnGestionProductos != null) {
             btnGestionProductos.setOnClickListener(v -> {
-                Toast.makeText(this, "Navegando a Gestión de Productos (Pendiente)", Toast.LENGTH_SHORT).show();
 
+
+                if (RepositorioInventarioVendedor.isVendedorAutorizado()) {
+
+                    Intent intent = new Intent(MiCuentaActivity.this, GestionVendedor.class);
+                    startActivity(intent);
+
+                } else {
+                    Toast.makeText(this, "Acceso denegado. Permisos de vendedor requeridos.", Toast.LENGTH_LONG).show();
+                    // Ocultar si falló la verificación (puede ser redundante, pero seguro)
+                    btnGestionProductos.setVisibility(View.GONE);
+                }
             });
         }
 
@@ -163,7 +203,7 @@ public class MiCuentaActivity extends AppCompatActivity {
         }
     }
 
-
+    // ... (actualizarDatosUsuario, actualizarCorreoEnAuth, guardarCambiosEnFirestore) ...
 
     private void actualizarDatosUsuario() {
         if (currentUser == null) {

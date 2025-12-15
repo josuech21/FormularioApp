@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">FormularioApp</string>
+    <string name="google_maps_key" translatable="false">TU_CLAVE_API_DE_GOOGLE_AQUI</string>
 </resources>

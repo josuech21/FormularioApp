@@ -59,11 +59,9 @@ public class Registrarse_Activity extends AppCompatActivity {
         txtTelefonoRegistro = findViewById(R.id.txtTelefonoRegistro);
         btnRegistrar = findViewById(R.id.btnRegistrar);
         txtIrALogin = findViewById(R.id.txtIrALogin);
-        // **********************************************
-        // ASUME que tienes un componente Switch/CheckBox en tu layout para el rol
-        // Si no tienes uno, simplemente omite esta línea y establece el rol a 'false' en 'registrarUsuario'
+
+
         switchEsVendedor = findViewById(R.id.switchEsVendedor);
-        // **********************************************
 
 
         // 3. Configurar Listener del botón

@@ -3,8 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.formularioapp">
 
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
-
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
 
     <application
@@ -17,7 +19,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FormularioApp"
         tools:targetApi="31">
-
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
         <activity
             android:name=".Registrarse_Activity"
             android:exported="true">
@@ -71,10 +75,6 @@
             android:exported="false"
             android:label="Factura" />
 
-        <activity
-            android:name=".Cuenta_acceso"
-            android:exported="false"
-            android:label="Acceso a Cuenta" />
 
 
     </application>

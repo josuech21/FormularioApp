@@ -31,9 +31,13 @@ public class Login_Activity extends AppCompatActivity {
     private EditText txtEmailLogin, txtPasswordLogin;
     private Button btnLogin;
     private TextView txtIrARegistro;
+    // REMOVIDO: Button btnGoogleLogin
 
     // Instancia de Firebase Authentication
     private FirebaseAuth mAuth;
+    // REMOVIDO: GoogleSignInClient mGoogleSignInClient
+    // REMOVIDO: ActivityResultLauncher<Intent> googleSignInLauncher
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,12 +47,14 @@ public class Login_Activity extends AppCompatActivity {
         // 1. Inicializar Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
-        // 2. Inicializar Vistas (Ajusta estos IDs a tu layout XML)
+        // 2. Inicializar Vistas
         txtEmailLogin = findViewById(R.id.txtEmailLogin);
         txtPasswordLogin = findViewById(R.id.txtPasswordLogin);
         btnLogin = findViewById(R.id.btnLogin);
         txtIrARegistro = findViewById(R.id.txtIrARegistro);
+        // REMOVIDO: Vincular btnGoogleLogin
 
+        // 3. Configurar Listeners
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -56,11 +62,12 @@ public class Login_Activity extends AppCompatActivity {
             }
         });
 
-
         txtIrARegistro.setOnClickListener(v -> {
             Intent intent = new Intent(Login_Activity.this, Registrarse_Activity.class);
             startActivity(intent);
         });
+
+        // REMOVIDO: Listener de btnGoogleLogin
     }
 
 
@@ -70,7 +77,7 @@ public class Login_Activity extends AppCompatActivity {
         // Verifica si el usuario está actualmente logueado (non-null) y actualiza la UI.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
-            // Si el usuario ya está logueado, lo enviamos directamente a la Home
+            // Si el usuario ya está logueado, lo enviamos directamente al Feed
             irAHomeActivity();
         }
     }
@@ -90,7 +97,7 @@ public class Login_Activity extends AppCompatActivity {
         }
 
         // 2. Validación de formato de correo electrónico
-        final String EMAIL_PATTERN = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[_A-Za-z]{2,})$";
+        final String EMAIL_PATTERN = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[_A-Za-z0-9]+)*(\\.[_A-Za-z]{2,})$";
         Pattern pattern = Pattern.compile(EMAIL_PATTERN);
         Matcher matcher = pattern.matcher(email);
 
@@ -99,7 +106,7 @@ public class Login_Activity extends AppCompatActivity {
             return false;
         }
 
-
+        // 3. Validación de longitud de contraseña
         if (password.length() < 6) {
             txtPasswordLogin.setError("La contraseña debe tener al menos 6 caracteres.");
             return false;
@@ -109,13 +116,9 @@ public class Login_Activity extends AppCompatActivity {
         return true;
     }
 
-   /* private void iniciarSesionConGoogle() {
-        // 1. Ejecutar validación de campos
-        if (!validarCampos()) {
-            return;
-        }
-        //redirigir a url de crear cuenta con google o alguna auth existente con firebase
-*/
+    // REMOVIDO: iniciarSesionConGoogle()
+    // REMOVIDO: handleSignInResult(Task<GoogleSignInAccount> completedTask)
+
     private void iniciarSesion() {
         // 1. Ejecutar validación de campos
         if (!validarCampos()) {
@@ -141,7 +144,6 @@ public class Login_Activity extends AppCompatActivity {
                         } else {
                             // Si el login falla (contraseña incorrecta, usuario no existe)
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
-                            // Firebase proporciona un mensaje de error que podemos usar
                             String error = task.getException() != null ? task.getException().getMessage() : "Credenciales inválidas.";
                             Toast.makeText(Login_Activity.this, "Error de inicio de sesión: " + error,
                                     Toast.LENGTH_LONG).show();
@@ -156,7 +158,7 @@ public class Login_Activity extends AppCompatActivity {
 
         Intent intent = new Intent(Login_Activity.this, FeedActivity.class);
 
-
+        // Limpiar la pila de actividades para que el usuario no pueda volver al Login con el botón de retroceso
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
         finish();

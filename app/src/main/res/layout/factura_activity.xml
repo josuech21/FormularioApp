@@ -6,37 +6,102 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
+    android:background="@android:color/background_light"
     tools:context=".FacturaActivity">
 
     <TextView
-        android:id="@+id/tvTitulo"
-        android:layout_width="wrap_content"
+        android:id="@+id/tvTituloFactura"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Factura / Recibo"
-        android:textSize="24sp"
+        android:text="Resumen de la Orden y Pago"
+        android:textSize="28sp"
         android:textStyle="bold"
-        android:paddingBottom="8dp"
+        android:textColor="@android:color/holo_blue_dark"
+        android:paddingBottom="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <ScrollView
+        android:id="@+id/scrollViewItems"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/tvTitulo"
+        android:background="@android:color/white"
+        android:elevation="4dp"
+        android:importantForAccessibility="no"
+        app:layout_constraintTop_toBottomOf="@id/tvTituloFactura"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toTopOf="@id/layoutTotales">
 
-        <TextView
-            android:id="@+id/tvFactura"
+        <LinearLayout
+            android:id="@+id/layoutFacturaItems"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:fontFamily="monospace"
-            android:lineSpacingExtra="2dp"
-            tools:text="Contenido de la Factura" />
+            android:orientation="vertical"
+            android:padding="12dp"/>
 
     </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/layoutTotales"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        app:layout_constraintBottom_toTopOf="@id/btnConfirmarPago"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/txtSubtotal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:textStyle="normal"
+            android:textColor="@android:color/darker_gray"
+            android:text="Subtotal: ₡ 0.00"
+            android:gravity="end"
+            android:paddingTop="4dp"/>
+
+        <TextView
+            android:id="@+id/txtImpuestos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:textStyle="normal"
+            android:textColor="@android:color/darker_gray"
+            android:text="Impuestos (13%): ₡ 0.00"
+            android:gravity="end"
+            android:paddingTop="4dp"/>
+
+        <TextView
+            android:id="@+id/txtTotalFactura"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/holo_red_dark"
+            android:text="TOTAL A PAGAR: ₡ 0.00"
+            android:gravity="end"
+            android:paddingTop="12dp"/>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnConfirmarPago"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="CONFIRMAR PAGO Y ORDENAR"
+        android:textSize="18sp"
+        android:paddingVertical="12dp"
+        android:backgroundTint="@android:color/holo_green_dark"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -44,30 +44,35 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation("androidx.recyclerview:recyclerview:1.3.2")
-    //libreria para animacion (en caso de requerir):
     implementation ("com.airbnb.android:lottie:6.7.1")
 
-    // ===================================================
     // 1. GLIDE (Para carga de imágenes)
     implementation("com.github.bumptech.glide:glide:4.16.0")
-    // ¡¡¡LÍNEA AÑADIDA!!!: Necesaria para el procesamiento de anotaciones de Glide
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
 
-    // FIREBASE UI (Para el adaptador de RecyclerView de Firestore)
-    implementation("com.firebaseui:firebase-ui-firestore:8.0.2")
-
-    // 2. DEPENDENCIAS DE FIREBASE
-    // Importar la Firebase BoM (Bill of Materials) para gestionar versiones
+    // 2. CONFIGURACIÓN DE FIREBASE Y GOOGLE SIGN-IN
+    // Importar la Firebase BoM (Bill of Materials) para gestionar versiones (Usamos la versión 34.0.0)
     implementation(platform("com.google.firebase:firebase-bom:34.0.0"))
 
-    // Firebase Authentication (para Login y Registro)
-    implementation("com.google.firebase:firebase-auth")
+    // Modulos de Firebase (SIN VERSIONES, gestionadas por la BoM):
+    implementation("com.google.firebase:firebase-auth")       // Autenticación
+    implementation("com.google.firebase:firebase-firestore")  // Base de datos
+    implementation("com.google.firebase:firebase-storage")    // Almacenamiento
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
+// Si usas Firebase UI para Firestore, intenta excluir el módulo de Annotations
+    // o cualquier módulo común que Google Play Services pueda duplicar.
 
-    // Cloud Firestore (LA LIBRERÍA DE BASE DE DATOS)
-    implementation("com.google.firebase:firebase-firestore")
+    // Google Location Services (necesario para obtener la ubicación actual FusedLocationClient)
+    implementation("com.google.android.gms:play-services-location:21.0.1")
 
-    // Opcional: Firebase Storage (para subir fotos de productos)
-    implementation("com.google.firebase:firebase-storage")
+    // Firebase UI
+    implementation("com.firebaseui:firebase-ui-firestore:8.0.2")
+
+    // Google Sign-In (SÍ NECESITA SU VERSIÓN EXPLICITA o la que mejor funcione con tu entorno)
+    // Mantendremos la versión que tenías para evitar problemas de compatibilidad inmediata.
+
+    // Opcionalmente, puedes intentar usar la versión de la BoM si es compatible:
+    // implementation 'com.google.android.gms:play-services-auth'
 
     // Dependencias de testing
     testImplementation(libs.junit)

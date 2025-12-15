@@ -1,73 +1,80 @@
 package com.example.formularioapp;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
+// Importaciones de Android y soporte
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.Switch;
-import android.widget.Toast;
-import android.widget.TextView;
-import android.util.Log;
-import android.graphics.Color;
-import android.text.InputType;
-import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+
+// Importaciones de Firebase
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+// Importaciones de Google Maps y Ubicación
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
+
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
-public class PublicarArticulo_Activity extends AppCompatActivity {
 
-    private static final String TAG = "PublicarArticulo_Act";
-    private static final int PICK_IMAGE_REQUEST = 1;
-    private static final int PERMISSION_REQUEST_CODE = 2;
+public class PublicarArticulo_Activity extends AppCompatActivity
+        implements OnMapReadyCallback, OnMapClickListener {
 
+    // Se elimina la variable TAG
+
+    // Firebase
+    private FirebaseAuth mAuth;
     private FirebaseFirestore db;
-    private FirebaseUser currentUser;
     private StorageReference storageRef;
 
-    // --- UI Components ---
-    private Button btnModificar;
-    private Button btnEliminar;
-    private Button btnPublicar;
-    private Button btnSeleccionarFoto;
-    private ImageView imgProductoDetalle;
-    private Switch switchDisponible;
+    // UI Components
+    private ImageView imgFoto;
+    private EditText txtNombreArticulo, txtPrecio, txtDescripcion, txtUbicacionManual;
+    private Button btnPublicar, btnSeleccionarFoto;
 
-    private EditText txtNombreProducto;
-    private EditText txtPrecioProducto; // Ahora es EditText
-    private EditText txtDetalleProducto;
-    private TextView txtNombreVendedor; // Se mantiene como TextView (solo lectura)
+    // Foto
+    private Uri fotoUri;
 
-    private String productoId = null;
-    private boolean isModoEdicion = false;
-    private Uri imagenUriSeleccionada;
-    private String fotoUrlActual = "";
-    private String nombreVendedorActual = "";
-
-    // URL de imagen por defecto
-    private static final String DEFAULT_IMAGE_URL = "https://via.placeholder.com/300?text=Sin+Imagen";
+    // Google Maps y Ubicación
+    private GoogleMap mMap;
+    private FusedLocationProviderClient fusedLocationClient;
+    private LatLng ubicacionSeleccionada;
+    private Marker ubicacionMarker;
+    private ActivityResultLauncher<String[]> locationPermissionRequest;
+    private ActivityResultLauncher<Intent> photoPickerLauncher;
 
 
     @Override
@@ -75,343 +82,280 @@ public class PublicarArticulo_Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.publicar_vendedor);
 
+        // Inicialización de Firebase
+        mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        storageRef = FirebaseStorage.getInstance().getReference("imagenes_productos");
+        storageRef = FirebaseStorage.getInstance().getReference().child("imagenes_productos");
 
-        if (currentUser == null) {
-            Toast.makeText(this, "Debe iniciar sesión para gestionar productos.", Toast.LENGTH_LONG).show();
-            finish();
+        // Inicialización de Vistas
+        imgFoto = findViewById(R.id.imgFoto);
+        btnSeleccionarFoto = findViewById(R.id.btnSeleccionarFoto);
+        txtNombreArticulo = findViewById(R.id.txtNombreArticulo);
+        txtPrecio = findViewById(R.id.txtPrecio);
+        txtDescripcion = findViewById(R.id.txtDescripcion);
+        btnPublicar = findViewById(R.id.btnPublicarArtículo);
+        txtUbicacionManual = findViewById(R.id.txtUbicacionManual);
+
+        // Inicialización de Google Maps y Ubicación
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        // Obtener el fragmento del mapa
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.mapFragmentContainer);
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
+        }
+
+        // Configurar Lanzadores de Resultados
+        configurarLanzadores();
+
+        // Listeners
+        btnSeleccionarFoto.setOnClickListener(v -> seleccionarFoto());
+        btnPublicar.setOnClickListener(v -> publicarArticulo());
+    }
+
+    private void configurarLanzadores() {
+        // Lanzador para permisos de ubicación
+        locationPermissionRequest = registerForActivityResult(
+                new ActivityResultContracts.RequestMultiplePermissions(), result -> {
+                    boolean fineLocationGranted = result.get(Manifest.permission.ACCESS_FINE_LOCATION) != null &&
+                            result.get(Manifest.permission.ACCESS_FINE_LOCATION);
+
+                    if (fineLocationGranted) {
+                        obtenerUbicacionActual();
+                    } else {
+                        Toast.makeText(this, "Permiso de ubicación denegado. Usando San José como defecto.", Toast.LENGTH_LONG).show();
+                        centrarMapa(new LatLng(9.9347, -84.0875), "San José, Costa Rica");
+                    }
+                });
+
+        // Lanzador para seleccionar imagen de la galería
+        photoPickerLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        fotoUri = result.getData().getData();
+                        // Mostrar la foto en el ImageView
+                        Glide.with(this).load(fotoUri).into(imgFoto);
+                    }
+                });
+    }
+
+    // ====================================================================
+    // LÓGICA DE GOOGLE MAPS Y UBICACIÓN
+    // ====================================================================
+
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+        mMap = googleMap;
+        mMap.getUiSettings().setZoomControlsEnabled(true);
+        mMap.getUiSettings().setMapToolbarEnabled(false);
+
+        // Se usa 'this' ya que implementamos OnMapClickListener
+        mMap.setOnMapClickListener(this);
+
+        // Manejo de arrastre del pin
+        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            public void onMarkerDragStart(@NonNull Marker marker) {}
+            public void onMarkerDrag(@NonNull Marker marker) {}
+            public void onMarkerDragEnd(@NonNull Marker marker) {
+                actualizarMarcadorYTexto(marker.getPosition());
+            }
+        });
+
+        solicitarPermisosYObtenerUbicacion();
+    }
+
+    // Método REQUERIDO: Se llama cuando el usuario hace clic en el mapa
+    @Override
+    public void onMapClick(@NonNull LatLng latLng) {
+        actualizarMarcadorYTexto(latLng);
+    }
+
+    private void solicitarPermisosYObtenerUbicacion() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            obtenerUbicacionActual();
+        } else {
+            locationPermissionRequest.launch(new String[]{
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+            });
+        }
+    }
+
+    private void obtenerUbicacionActual() {
+        try {
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, location -> {
+                        if (location != null) {
+                            LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+                            centrarMapa(currentLatLng, "Mi Ubicación Aproximada");
+                        } else {
+                            centrarMapa(new LatLng(9.9347, -84.0875), "San José, CR");
+                        }
+                    });
+        } catch (SecurityException e) {
+            // Se usa la cadena literal
+            Log.e("PublicarArticulo", "Permiso de ubicación no otorgado", e);
+        }
+    }
+
+    private void centrarMapa(LatLng latLng, String titulo) {
+        if (mMap == null) return;
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13));
+        actualizarMarcadorYTexto(latLng);
+    }
+
+    private void actualizarMarcadorYTexto(LatLng latLng) {
+        if (mMap == null) return;
+
+        ubicacionSeleccionada = latLng;
+
+        if (ubicacionMarker != null) {
+            ubicacionMarker.remove();
+        }
+
+        ubicacionMarker = mMap.addMarker(new MarkerOptions()
+                .position(latLng)
+                .title("Ubicación del Artículo")
+                .draggable(true));
+
+        obtenerDireccionDesdeLatLng(latLng);
+    }
+
+    private void obtenerDireccionDesdeLatLng(LatLng latLng) {
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(
+                    latLng.latitude, latLng.longitude, 1);
+
+            if (addresses != null && !addresses.isEmpty()) {
+                Address returnedAddress = addresses.get(0);
+                StringBuilder strReturnedAddress = new StringBuilder();
+
+                // Formar una dirección legible (ej: Ciudad, País o Sub-localidad)
+                if (returnedAddress.getLocality() != null) {
+                    strReturnedAddress.append(returnedAddress.getLocality()).append(", ");
+                }
+                if (returnedAddress.getAdminArea() != null) {
+                    strReturnedAddress.append(returnedAddress.getAdminArea());
+                }
+
+                txtUbicacionManual.setText(strReturnedAddress.toString().trim());
+
+            } else {
+                txtUbicacionManual.setText("Ubicación Desconocida");
+            }
+        } catch (IOException e) {
+            // Se usa la cadena literal
+            Log.e("PublicarArticulo", "Geocoding error", e);
+            txtUbicacionManual.setText("Error al obtener dirección.");
+        }
+    }
+
+
+    // ====================================================================
+    // LÓGICA DE PUBLICACIÓN Y FIREBASE
+    // ====================================================================
+
+    private void seleccionarFoto() {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        photoPickerLauncher.launch(intent);
+    }
+
+    private boolean validarCampos() {
+        if (TextUtils.isEmpty(txtNombreArticulo.getText())) {
+            txtNombreArticulo.setError("Ingrese el nombre.");
+            return false;
+        }
+        if (TextUtils.isEmpty(txtPrecio.getText())) {
+            txtPrecio.setError("Ingrese el precio.");
+            return false;
+        }
+        if (TextUtils.isEmpty(txtDescripcion.getText())) {
+            txtDescripcion.setError("Ingrese la descripción.");
+            return false;
+        }
+        if (fotoUri == null) {
+            Toast.makeText(this, "Seleccione una foto para el artículo.", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (ubicacionSeleccionada == null || TextUtils.isEmpty(txtUbicacionManual.getText())) {
+            Toast.makeText(this, "Seleccione la ubicación en el mapa.", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
+    private void publicarArticulo() {
+        if (!validarCampos()) {
             return;
         }
 
-        verificarRolVendedor();
-    }
+        btnPublicar.setEnabled(false);
+        Toast.makeText(this, "Subiendo imagen...", Toast.LENGTH_SHORT).show();
 
-    private void verificarRolVendedor() {
-        db.collection("usuarios").document(currentUser.getUid()).get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    Boolean esVendedor = documentSnapshot.getBoolean("esVendedor");
-                    if (esVendedor != null && esVendedor) {
-                        String nombre = documentSnapshot.getString("nombre");
-                        if (nombre != null) {
-                            this.nombreVendedorActual = nombre;
-                        }
-                        inicializarActivity();
-                    } else {
-                        Toast.makeText(this, "Acceso denegado: No tienes permisos de vendedor.", Toast.LENGTH_LONG).show();
-                        finish();
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error al verificar el rol del usuario.", e);
-                    Toast.makeText(this, "Error al conectar con la base de datos.", Toast.LENGTH_LONG).show();
-                    finish();
-                });
-    }
-
-    private void inicializarActivity() {
-        vincularVistas();
-
-        // 1. Establecer el nombre del vendedor (solo lectura)
-        if (!nombreVendedorActual.isEmpty()) {
-            txtNombreVendedor.setText(this.nombreVendedorActual);
-        }
-
-        productoId = getIntent().getStringExtra("PRODUCTO_ID");
-
-        if (productoId != null) {
-            cargarDatosArticulo(productoId);
-            configurarModoVisualizacion();
-        } else {
-            configurarModoPublicacionInicial();
-        }
-
-        // --- Listeners: Configuración aquí ---
-        btnModificar.setOnClickListener(v -> alternarModoEdicion());
-        btnEliminar.setOnClickListener(v -> confirmarYEliminarArticulo());
-        btnSeleccionarFoto.setOnClickListener(v -> verificarPermisosYSeleccionarImagen());
-
-        // Lógica de Publicación/Edición SIN subida a Storage
-        btnPublicar.setOnClickListener(v -> {
-            btnPublicar.setEnabled(false);
-            if (productoId == null) {
-                // Modo Publicación Nueva
-                guardarNuevoProducto(DEFAULT_IMAGE_URL);
-            } else if (isModoEdicion) {
-                // Modo Edición
-                actualizarProductoExistente(fotoUrlActual.isEmpty() ? DEFAULT_IMAGE_URL : fotoUrlActual);
-            }
-        });
-
-        switchDisponible.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (productoId != null) {
-                actualizarDisponibilidad(productoId, isChecked);
-            }
-        });
-    }
-
-    private void vincularVistas() {
-        btnModificar = findViewById(R.id.btnModificar);
-        btnEliminar = findViewById(R.id.btnEliminar);
-        btnPublicar = findViewById(R.id.btnAgregarCarrito); // Usa el mismo ID del botón grande
-        switchDisponible = findViewById(R.id.switchDisponible);
-
-        // Editables
-        txtNombreProducto = findViewById(R.id.txtNombreProducto);
-        txtPrecioProducto = findViewById(R.id.txtPrecioProducto); // <<<< EDITTEXT
-        txtDetalleProducto = findViewById(R.id.txtDetalleProducto);
-
-        // Solo lectura
-        txtNombreVendedor = findViewById(R.id.txtNombreVendedor);
-
-        btnSeleccionarFoto = findViewById(R.id.btnSeleccionarFoto);
-        imgProductoDetalle = findViewById(R.id.imgProductoDetalle);
-
-        // Configuración de InputTypes
-        configurarCampoEditable(txtNombreProducto, EditorInfo.IME_ACTION_NEXT, InputType.TYPE_CLASS_TEXT);
-        configurarCampoEditable(txtPrecioProducto, EditorInfo.IME_ACTION_NEXT, InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        configurarCampoEditable(txtDetalleProducto, EditorInfo.IME_ACTION_DONE, InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
-    }
-
-    private void configurarCampoEditable(TextView tv, int imeAction, int inputType) {
-        tv.setFocusable(true);
-        tv.setFocusableInTouchMode(true);
-        tv.setImeOptions(imeAction);
-        tv.setInputType(inputType);
-    }
-
-    private void configurarModoVisualizacion() {
-        isModoEdicion = false;
-        btnModificar.setVisibility(View.VISIBLE);
-        btnEliminar.setVisibility(View.VISIBLE);
-        switchDisponible.setVisibility(View.VISIBLE);
-
-        btnPublicar.setVisibility(View.GONE);
-        btnSeleccionarFoto.setVisibility(View.GONE);
-        aplicarEstilosEdicion(false);
-    }
-
-    private void configurarModoPublicacionInicial() {
-        isModoEdicion = true;
-        btnModificar.setVisibility(View.GONE);
-        btnEliminar.setVisibility(View.GONE);
-        switchDisponible.setVisibility(View.GONE);
-
-        btnPublicar.setText("PUBLICAR ARTÍCULO");
-        btnPublicar.setVisibility(View.VISIBLE);
-        btnSeleccionarFoto.setVisibility(View.VISIBLE);
-        aplicarEstilosEdicion(true);
-
-        txtNombreProducto.setText("");
-        txtPrecioProducto.setText("");
-        txtDetalleProducto.setText("");
-    }
-
-    private void alternarModoEdicion() {
-        isModoEdicion = !isModoEdicion;
-
-        if (isModoEdicion) {
-            btnModificar.setText("CANCELAR");
-            btnPublicar.setText("GUARDAR CAMBIOS");
-            btnPublicar.setVisibility(View.VISIBLE);
-            btnSeleccionarFoto.setVisibility(View.VISIBLE);
-            aplicarEstilosEdicion(true);
-        } else {
-            btnModificar.setText("MODIFICAR");
-            btnPublicar.setVisibility(View.GONE);
-            btnSeleccionarFoto.setVisibility(View.GONE);
-            aplicarEstilosEdicion(false);
-            cargarDatosArticulo(productoId);
-            imagenUriSeleccionada = null;
-        }
-    }
-
-    private void aplicarEstilosEdicion(boolean editable) {
-        int colorFondo = editable ? Color.parseColor("#FFFBE5") : Color.TRANSPARENT;
-
-        TextView[] camposEditables = {txtNombreProducto, txtPrecioProducto, txtDetalleProducto};
-        for (TextView tv : camposEditables) {
-            tv.setBackgroundColor(colorFondo);
-            tv.setFocusable(editable);
-            tv.setFocusableInTouchMode(editable);
-        }
-    }
-
-    // --- LÓGICA DE FOTO ---
-
-    private void verificarPermisosYSeleccionarImagen() {
-        String permisoRequerido = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ?
-                Manifest.permission.READ_MEDIA_IMAGES :
-                Manifest.permission.READ_EXTERNAL_STORAGE;
-
-        if (ContextCompat.checkSelfPermission(this, permisoRequerido) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{permisoRequerido}, PERMISSION_REQUEST_CODE);
-        } else {
-            seleccionarImagen();
-        }
-    }
-
-    private void seleccionarImagen() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("image/*");
-        startActivityForResult(intent, PICK_IMAGE_REQUEST);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            imagenUriSeleccionada = data.getData();
-            imgProductoDetalle.setImageURI(imagenUriSeleccionada);
-            Toast.makeText(this, "Imagen seleccionada.", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    // --- LÓGICA DE PERSISTENCIA FIREBASE ---
-
-    private String getText(TextView textView) {
-        return textView.getText() != null ? textView.getText().toString().trim() : "";
-    }
-
-    private double parsePrecio(String precioStr) {
-        try {
-            // Limpia el string de caracteres no numéricos excepto el punto
-            String cleanedStr = precioStr.replaceAll("[^0-9.]", "");
-            if (cleanedStr.isEmpty()) return 0.0;
-            return Double.parseDouble(cleanedStr);
-        } catch (NumberFormatException e) {
-            Log.e(TAG, "Error al parsear precio: " + precioStr, e);
-            return 0.0;
-        }
-    }
-
-    private Map<String, Object> validarYObtenerDatosProducto(boolean isNewProduct) {
-        String nombre = getText(txtNombreProducto);
-        double precio = parsePrecio(getText(txtPrecioProducto));
-        String detalle = getText(txtDetalleProducto);
-
-        if (nombre.isEmpty() || precio <= 0) {
+        // Refuerzo: Doble validación de la URI para prevenir el error "Object does not exist"
+        if (fotoUri == null || TextUtils.isEmpty(fotoUri.toString())) {
+            Toast.makeText(this, "Error de foto: La URI seleccionada es inválida.", Toast.LENGTH_LONG).show();
             btnPublicar.setEnabled(true);
-            Toast.makeText(this, "Complete nombre y precio válidos.", Toast.LENGTH_SHORT).show();
-            return null;
+            return;
         }
 
-        Map<String, Object> productoData = new HashMap<>();
-        productoData.put("nombre", nombre);
-        productoData.put("detalle", detalle);
-        productoData.put("precio", precio);
 
-        if (isNewProduct) {
-            productoData.put("stock", 1L); // Usar Long para consistencia
-            productoData.put("vendedorId", currentUser.getUid());
-        }
-
-        return productoData;
+        // 1. Subir la imagen a Firebase Storage
+        StorageReference fotoRef = storageRef.child(UUID.randomUUID().toString());
+        fotoRef.putFile(fotoUri)
+                .addOnSuccessListener(taskSnapshot -> {
+                    // 2. Obtener la URL de descarga
+                    fotoRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                        String fotoUrl = uri.toString();
+                        // 3. Guardar los datos en Firestore
+                        guardarArticuloEnFirestore(fotoUrl);
+                    });
+                })
+                .addOnFailureListener(e -> {
+                    // Se usa la cadena literal
+                    Log.e("PublicarArticulo", "Error al subir imagen (Storage): " + e.getMessage(), e);
+                    String errorMsg = "Error al subir: " + (e.getMessage() != null ? e.getMessage() : "Fallo desconocido.");
+                    Toast.makeText(PublicarArticulo_Activity.this, errorMsg, Toast.LENGTH_LONG).show();
+                    btnPublicar.setEnabled(true);
+                });
     }
 
-    private void guardarNuevoProducto(String fotoUrl) {
-        Map<String, Object> productoData = validarYObtenerDatosProducto(true);
-        if (productoData == null) return;
+    private void guardarArticuloEnFirestore(String fotoUrl) {
+        if (mAuth.getCurrentUser() == null) {
+            Toast.makeText(this, "Debe iniciar sesión para publicar.", Toast.LENGTH_LONG).show();
+            btnPublicar.setEnabled(true);
+            return;
+        }
 
-        productoData.put("fotoUrl", fotoUrl);
+        String vendedorId = mAuth.getCurrentUser().getUid();
 
-        db.collection("productos")
-                .add(productoData)
+        Map<String, Object> producto = new HashMap<>();
+        producto.put("nombre", txtNombreArticulo.getText().toString().trim());
+        producto.put("descripcion", txtDescripcion.getText().toString().trim());
+        producto.put("precio", Double.parseDouble(txtPrecio.getText().toString().trim()));
+        producto.put("stock", 1L); // Stock inicial
+        producto.put("fotoUrl", fotoUrl);
+        producto.put("vendedorId", vendedorId);
+
+        // DATOS DE UBICACIÓN
+        producto.put("ubicacion", txtUbicacionManual.getText().toString().trim());
+        producto.put("latitud", ubicacionSeleccionada.latitude);
+        producto.put("longitud", ubicacionSeleccionada.longitude);
+
+        db.collection("productos").add(producto)
                 .addOnSuccessListener(documentReference -> {
-                    Toast.makeText(this, "Artículo publicado con éxito en Firestore.", Toast.LENGTH_LONG).show();
-                    setResult(RESULT_OK);
-                    finish();
+                    Toast.makeText(PublicarArticulo_Activity.this, "Artículo publicado con éxito!", Toast.LENGTH_SHORT).show();
+                    finish(); // Cierra la actividad y vuelve al Feed
                 })
                 .addOnFailureListener(e -> {
+                    // Se usa la cadena literal
+                    Log.e("PublicarArticulo", "Error al guardar en Firestore", e);
+                    Toast.makeText(PublicarArticulo_Activity.this, "Error al publicar: " + e.getMessage(), Toast.LENGTH_LONG).show();
                     btnPublicar.setEnabled(true);
-                    Log.e(TAG, "Error al guardar en Firestore", e);
-                    Toast.makeText(this, "Error al guardar: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
-    }
-
-    private void actualizarProductoExistente(String nuevaFotoUrl) {
-        if (productoId == null) return;
-
-        Map<String, Object> updates = validarYObtenerDatosProducto(false);
-        if (updates == null) return;
-
-        updates.put("fotoUrl", nuevaFotoUrl);
-
-        db.collection("productos").document(productoId)
-                .update(updates)
-                .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(this, "Artículo actualizado con éxito en Firestore.", Toast.LENGTH_SHORT).show();
-                    configurarModoVisualizacion();
-                    btnPublicar.setEnabled(true);
-                    imagenUriSeleccionada = null;
-                    setResult(RESULT_OK);
-                })
-                .addOnFailureListener(e -> {
-                    btnPublicar.setEnabled(true);
-                    Log.e(TAG, "Error al actualizar", e);
-                });
-    }
-
-    private void cargarDatosArticulo(String id) {
-        db.collection("productos").document(id)
-                .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-
-                        String nombre = documentSnapshot.getString("nombre");
-                        Double precioDouble = documentSnapshot.getDouble("precio");
-                        String detalle = documentSnapshot.getString("detalle");
-                        Long stockLong = documentSnapshot.getLong("stock");
-
-                        if (nombre != null) txtNombreProducto.setText(nombre);
-                        if (detalle != null) txtDetalleProducto.setText(detalle);
-
-                        double precio = (precioDouble != null) ? precioDouble : 0.0;
-                        txtPrecioProducto.setText(String.format(Locale.getDefault(), "%.2f", precio));
-
-                        long stock = (stockLong != null) ? stockLong : 0;
-                        switchDisponible.setChecked(stock > 0);
-
-                        fotoUrlActual = documentSnapshot.getString("fotoUrl");
-                        String urlToLoad = (fotoUrlActual != null && !fotoUrlActual.isEmpty()) ? fotoUrlActual : DEFAULT_IMAGE_URL;
-                        Glide.with(this).load(urlToLoad).into(imgProductoDetalle);
-
-                    } else {
-                        Toast.makeText(this, "Artículo no encontrado.", Toast.LENGTH_SHORT).show();
-                        finish();
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error cargando artículo", e);
-                    Toast.makeText(this, "Error al cargar datos del artículo.", Toast.LENGTH_SHORT).show();
-                });
-    }
-
-    private void actualizarDisponibilidad(String id, boolean estaDisponible) {
-        long stock = estaDisponible ? 1L : 0L;
-        Map<String, Object> updates = new HashMap<>();
-        updates.put("stock", stock);
-
-        db.collection("productos").document(id)
-                .set(updates, SetOptions.merge())
-                .addOnSuccessListener(aVoid -> {
-                    String estado = estaDisponible ? "DISPONIBLE" : "VENDIDO";
-                    Toast.makeText(this, "Estado actualizado a: " + estado, Toast.LENGTH_SHORT).show();
-                })
-                .addOnFailureListener(e -> Log.e(TAG, "Error al actualizar disponibilidad", e));
-    }
-
-    private void confirmarYEliminarArticulo() {
-        if (productoId == null) return;
-
-        db.collection("productos").document(productoId)
-                .delete()
-                .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(this, "Artículo eliminado con éxito.", Toast.LENGTH_SHORT).show();
-                    setResult(RESULT_OK);
-                    finish();
-                })
-                .addOnFailureListener(e -> Log.e(TAG, "Error al eliminar", e));
     }
 }
