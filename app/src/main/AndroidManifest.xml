@@ -4,7 +4,7 @@
     package="com.example.formularioapp">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+
 
 
     <application
@@ -28,10 +28,6 @@
         </activity>
 
         <activity
-            android:name=".Login_Activity"
-            android:exported="false" />
-
-        <activity
             android:name=".FeedActivity"
             android:exported="true">
             <intent-filter>
@@ -41,15 +37,23 @@
         </activity>
 
         <activity
-            android:name=".MiCuentaActivity"
+            android:name=".Login_Activity"
             android:exported="false" />
+
+        <activity
+            android:name=".MiCuentaActivity"
+            android:exported="false"
+            android:label="Mi Cuenta" />
 
         <activity
             android:name=".HistorialdeCompras_Activity"
             android:exported="false"
-            />
+            android:label="Historial de Compras" />
 
-        <activity android:name=".Micarrito_Activity" />
+        <activity
+            android:name=".Micarrito_Activity"
+            android:exported="false"
+            android:label="Mi Carrito" />
 
         <activity
             android:name=".Metododepago_Activity"
@@ -62,6 +66,15 @@
             android:label="Mis Artículos en Venta"
             android:parentActivityName=".FeedActivity" />
 
+        <activity
+            android:name=".FacturaActivity"
+            android:exported="false"
+            android:label="Factura" />
+
+        <activity
+            android:name=".Cuenta_acceso"
+            android:exported="false"
+            android:label="Acceso a Cuenta" />
 
 
     </application>

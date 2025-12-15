@@ -43,7 +43,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
-
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
     //libreria para animacion (en caso de requerir):
     implementation ("com.airbnb.android:lottie:6.7.1")
 
